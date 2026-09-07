@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBL - Aplikasi Pembayaran</title>
+    <!-- Menggunakan Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Container disimulasikan seperti layar HP */
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            background-color: #ffffff;
+            min-height: 100vh;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Top Navigation Bar */
+        .navbar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            background: #fff;
+        }
+
+        .nav-item {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .nav-item.active {
+            color: #1a73e8;
+        }
+
+        .nav-item i {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        /* Ringkasan Saldo dan Akun */
+        .account-summary {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            background: #fff;
+        }
+
+        .balance-box, .points-box {
+            width: 48%;
+            padding: 12px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            cursor: pointer;
+        }
+
+        .balance-box i {
+            color: #dc3545;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .balance-amount {
+            font-size: 18px;
+            font-weight: bold;
+            color: #222;
+        }
+
+        .balance-sub {
+            font-size: 11px;
+            color: #dc3545;
+            margin-top: 2px;
+        }
+
+        .points-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-num {
+            background: #dc3545;
+            color: #fff;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .points-val {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .points-tier {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        /* Mini Quick Actions */
+        .quick-actions {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+
+        .qa-item {
+            text-align: center;
+            font-size: 11px;
+            color: #444;
+        }
+
+        .qa-item i {
+            font-size: 16px;
+            color: #198754;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* Banner Edukasi/Peringatan */
+        .warning-banner {
+            background-color: #e8f5e9;
+            color: #1b5e20;
+            padding: 10px 15px;
+            margin: 10px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        /* Grid Menu Fitur Utama */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px 10px;
+            padding: 15px;
+            background: #fff;
+        }
+
+        .menu-item {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .menu-icon-wrapper {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            font-size: 20px;
+            color: #fff;
+        }
+
+        .menu-label {
+            font-size: 11px;
+            color: #333;
+            line-height: 1.2;
+            max-width: 75px;
+        }
+
+        /* Label "Baru" atau Promo di Menu */
+        .badge-new {
+            position: absolute;
+            top: -8px;
+            right: 10px;
+            background: #dc3545;
+            color: white;
+            font-size: 8px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        /* Warna spesifik ikon menyerupai gambar */
+        .bg-edc-saku { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
+        .bg-edc-android { background: linear-gradient(135deg, #2193b0, #6dd5ed); }
+        .bg-qris-sound { background: linear-gradient(135deg, #1f4068, #162447); }
+        .bg-kirim-uang { background: #198754; }
+        .bg-token { background: #fd7e14; }
+        .bg-data { background: #0d6efd; }
+        .bg-pulsa { background: #dc3545; }
+        .bg-digital { background: #6f42c1; }
+        .bg-game { background: #20c997; }
+        .bg-qris-jual { background: #e83e8c; }
+        .bg-kredit { background: #0dcaf0; }
+        .bg-listrik { background: #ffc107; color: #000 !important;}
+        .bg-pdam { background: #0d6efd; }
+        .bg-telkom { background: #dc3545; }
+        .bg-bpjs { background: #198754; }
+        .bg-lainnya { background: #6c757d; }
+
+        /* Promo Banner Footer */
+        .promo-banner {
+            margin: 15px;
+            padding: 15px;
+            background: linear-gradient(135deg, #b21f1f, #fdbb2d);
+            border-radius: 12px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .promo-text h4 {
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .promo-text p {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        .promo-price {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* --- SISTEM PANEL MODAL & TRANSAKSI --- */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 100;
+        }
+
+        .modal-content {
+            width: 100%;
+            background: #fff;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+            animation: slideUp 0.3s ease-out;
+            max-height: 85%;
+            overflow-y: auto;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-header h3 {
+            font-size: 16px;
+            font-weight: bold;
+            color: #222;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #888;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: #1a73e8;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: #1a73e8;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* --- NOTIFIKASI HASIL TRANSAKSI (POPUP TENGAH) --- */
+        .status-popup-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            padding: 20px;
+        }
+
+        .status-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 25px 20px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        /* Desain Sukses */
+        .status-card.success i {
+            font-size: 50px;
+            color: #198754;
+            margin-bottom: 15px;
+        }
+
+        .status-card.success h4 {
+            color: #198754;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        /* Desain Gagal Profesional */
+        .status-card.failed i {
+            font-size: 45px;
+            color: #dc3545;
+            margin-bottom: 15px;
+        }
+
+        .status-card.failed h4 {
+            color: #dc3545;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-msg {
+            font-size: 13px;
+            color: #4f5d73;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            padding: 0 5px;
+        }
+
+        /* Pembungkus QRIS Profesional */
+        .qris-container {
+            background: #f8f9fa;
+            border: 2px dashed #ced4da;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 15px auto;
+            max-width: 280px;
+        }
+
+        .qris-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 6px;
+        }
+
+        .qris-caption {
+            font-size: 11px;
+            color: #6c757d;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .btn-close-popup {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            background: #fff;
+            color: #495057;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-close-popup:hover {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- Header Navigasi Atas -->
+        <div class="navbar">
+            <div class="nav-item active">
+                <i class="fa-solid fa-house"></i>
+                HOME
+            </div>
+            <div class="nav-item">
+                <i class="fa-solid fa-receipt"></i>
+                TRANSAKSI
+            </div>
+            <div class="nav-item">
+                <i class="fa-solid fa-circle-question"></i>
+                BANTUAN
+            </div>
+            <div class="nav-item">
+                <i class="fa-solid fa-user"></i>
+                AKUN
+            </div>
+        </div>
+
+        <!-- Info Saldo & Poin -->
+        <div class="account-summary">
+            <div class="balance-box" onclick="openModal('topup')">
+                <i class="fa-solid fa-wallet"></i>
+                <div class="balance-amount" id="main-balance">Rp23.000.000</div>
+                <div class="balance-sub">Isi saldo di sini, yuk!</div>
+            </div>
+            <div class="points-box">
+                <div class="badge-num">4</div>
+                <div>
+                    <div class="points-val">205</div>
+                    <div class="points-tier">Bronze</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Mini Actions -->
+        <div class="quick-actions">
+            <div class="qa-item"><i class="fa-solid fa-wand-magic-sparkles"></i>Coba Gratis!</div>
+            <div class="qa-item"><i class="fa-solid fa-book"></i>Pembukuan &...</div>
+            <div class="qa-item"><i class="fa-solid fa-tags"></i>Promo</div>
+            <div class="qa-item"><i class="fa-solid fa-bell"></i>Notifikasi</div>
+        </div>
+
+        <!-- Banner Peringatan -->
+        <div class="warning-banner">
+            <div>
+                <i class="fa-solid fa-shield-halved"></i> Hati-hati modus penipuan!
+            </div>
+            <i class="fa-solid fa-chevron-down"></i>
+        </div>
+
+        <!-- Grid Menu Layanan Utamanya -->
+        <div class="menu-grid">
+            <!-- Baris 1 -->
+            <div class="menu-item">
+                <span class="badge-new">Baru</span>
+                <div class="menu-icon-wrapper bg-edc-saku"><i class="fa-solid fa-credit-card"></i></div>
+                <div class="menu-label">EDC Saku</div>
+            </div>
+            <div class="menu-item">
+                <span class="badge-new">Baru</span>
+                <div class="menu-icon-wrapper bg-edc-android"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                <div class="menu-label">EDC Android</div>
+            </div>
+            <div class="menu-item">
+                <span class="badge-new">Baru</span>
+                <div class="menu-icon-wrapper bg-qris-sound"><i class="fa-solid fa-volume-high"></i></div>
+                <div class="menu-label">QRIS Soundbox</div>
+            </div>
+            <div class="menu-item" onclick="openModal('transfer')">
+                <div class="menu-icon-wrapper bg-kirim-uang"><i class="fa-solid fa-money-bill-transfer"></i></div>
+                <div class="menu-label">Kirim Uang</div>
+            </div>
+
+            <!-- Baris 2 -->
+            <div class="menu-item">
+                <div class="menu-icon-wrapper bg-token"><i class="fa-solid fa-bolt"></i></div>
+                <div class="menu-label">Token Listrik</div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon-wrapper bg-data"><i class="fa-solid fa-wifi"></i></div>
+                <div class="menu-label">Paket Data</div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon-wrapper bg-pulsa"><i class="fa-solid fa-signal"></i></div>
+                <div class="menu-label">Pulsa</div>
+            </div>
+            <div class="menu-item" onclick="openModal('topup')">
+                <div class="menu-icon-wrapper bg-digital"><i class="fa-solid fa-border-all"></i></div>
+                <div class="menu-label">Top Up Digital</div>
+            </div>
+
+            <!-- Baris 3 -->
+            <div class="menu-item">
+                <div class="menu-icon-wrapper bg-game"><i class="fa-solid fa-gamepad"></i></div>
+                <div class="menu-label">Top Up Game</div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon-wrapper bg-qris-jual"><i class="fa-solid fa-qrcode"></i></div>
+                <div class="menu-label">Buat QRIS Jualan</div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon-wrapper bg-kredit"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                <div class="menu-label">Angsuran Kredit</div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon-wrapper bg-listrik"><i class="fa-solid fa-bolt"></i></div>
+                <div class="menu-label">Tagihan Listrik PLN</div>
+            </div>
+
+            <!-- Baris 4 -->
+            <div class="menu-item">
+                <div class="menu-icon-wrapper bg-pdam"><i class="fa-solid fa-droplet"></i></div>
+                <div class="menu-label">PDAM</div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon-wrapper bg-telkom"><i class="fa-solid fa-phone"></i></div>
+                <div class="menu-label">Telkom / IndiHome</div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon-wrapper bg-bpjs"><i class="fa-solid fa-notes-medical"></i></div>
+                <div class="menu-label">BPJS Kesehatan</div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon-wrapper bg-lainnya"><i class="fa-solid fa-table-cells"></i></div>
+                <div class="menu-label">Lihat Semua</div>
+            </div>
+        </div>
+
+        <!-- Banner Promo Bagian Bawah -->
+        <div class="promo-banner">
+            <div class="promo-text">
+                <p>#UsahaMakin</p>
+                <h4>TOXCER</h4>
+                <p>Kirim Uang Tiap Hari</p>
+            </div>
+            <div class="promo-price">
+                Rp999
+            </div>
+        </div>
+
+        <!-- --- MODAL INPUT FORMULIR --- -->
+        <div class="modal-overlay" id="transaction-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-title">Formulir Transaksi</h3>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <div id="modal-form-body">
+                    <!-- Form Konten Diisi Dinamis oleh JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- --- MODAL NOTIFIKASI STATUS --- -->
+        <div class="status-popup-overlay" id="status-popup">
+            <div class="status-card" id="status-card-content">
+                <!-- Status Berhasil / Gagal Diisi Dinamis oleh JavaScript -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- LOGIKA INTERAKTIF JAVASCRIPT -->
+    <script>
+        let currentBalance = 23000000;
+
+        function formatRupiah(angka) {
+            return 'Rp' + angka.toLocaleString('id-ID');
+        }
+
+        function openModal(type) {
+            const modal = document.getElementById('transaction-modal');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-form-body');
+            
+            modal.style.display = 'flex';
+            
+            if(type === 'transfer') {
+                title.innerText = 'Kirim Uang / Transfer Dana';
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label>Bank / E-Wallet Tujuan</label>
+                        <select class="form-control">
+                            <option>Pilih Rekening Tujuan</option>
+                            <option>Bank BCA</option>
+                            <option>Bank Mandiri</option>
+                            <option>Bank BRI</option>
+                            <option>DANA</option>
+                            <option>OVO</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nomor Rekening / HP</label>
+                        <input type="number" class="form-control" placeholder="Masukkan nomor rekening">
+                    </div>
+                    <div class="form-group">
+                        <label>Nominal Transfer (Rupiah)</label>
+                        <input type="number" id="tx-amount" class="form-control" placeholder="Contoh: 500000">
+                    </div>
+                    <button class="btn-submit" onclick="processTransaction()">Lanjutkan Kirim Uang</button>
+                `;
+            } else if(type === 'topup') {
+                title.innerText = 'Top Up Saldo Digital';
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label>Pilih Layanan E-Wallet</label>
+                        <select class="form-control">
+                            <option>DANA Premium</option>
+                            <option>GoPay Customer</option>
+                            <option>OVO Cash</option>
+                            <option>LinkAja</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nomor Handphone</label>
+                        <input type="number" class="form-control" placeholder="08xxxxxxxxxx">
+                    </div>
+                    <div class="form-group">
+                        <label>Nominal Top Up (Rupiah)</label>
+                        <input type="number" id="tx-amount" class="form-control" placeholder="Contoh: 150000">
+                    </div>
+                    <button class="btn-submit" onclick="processTransaction()">Konfirmasi Top Up</button>
+                `;
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('transaction-modal').style.display = 'none';
+        }
+
+        function processTransaction() {
+            const amountInput = document.getElementById('tx-amount').value;
+            const amount = parseInt(amountInput);
+
+            if(!amountInput || isNaN(amount) || amount <= 0) {
+                alert('Silakan masukkan nominal transaksi yang valid.');
+                return;
+            }
+
+            closeModal();
+
+            const popup = document.getElementById('status-popup');
+            const card = document.getElementById('status-card-content');
+            popup.style.display = 'flex';
+
+            if(amount < 1000000) {
+                // Skenario Transaksi Berhasil
+                currentBalance -= amount;
+                document.getElementById('main-balance').innerText = formatRupiah(currentBalance);
+                
+                card.className = "status-card success";
+                card.innerHTML = `
+                    <i class="fa-solid fa-circle-check"></i>
+                    <h4>Transaksi Berhasil</h4>
+                    <div class="status-msg">
+                        Proses transaksi Anda senilai <strong>${formatRupiah(amount)}</strong> telah sukses dilakukan. Saldo Anda telah terpotong otomatis.
+                    </div>
+                    <button class="btn-close-popup" onclick="closePopup()">Selesai</button>
+                `;
+            } else {
+                // Skenario Batas Limit + Lampiran Gambar QRIS Profesional
+                card.className = "status-card failed";
+                card.innerHTML = `
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <h4>Transaksi Gagal</h4>
+                    <div class="status-msg">
+                        Batas limit transaksi harian terlampaui. Segera lakukan penambahan saldo (Top Up Manual) sebesar <strong>Rp500.000</strong> sebagai syarat pengaktifan kenaikan limit akun Anda.
+                    </div>
+                    <div class="qris-container">
+                        <img src="https://cdn.phototourl.com/free/2026-09-07-ca279338-1c8c-4174-a837-9c483e3c9ac1.jpg" alt="QRIS Kenaikan Limit" class="qris-image">
+                        <div class="qris-caption">Silakan scan kode QRIS resmi di atas untuk melanjutkan verifikasi akun</div>
+                    </div>
+                    <button class="btn-close-popup" onclick="closePopup()">Kembali ke Beranda</button>
+                `;
+            }
+        }
+
+        function closePopup() {
+            document.getElementById('status-popup').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
