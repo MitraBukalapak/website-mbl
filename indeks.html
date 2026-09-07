@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mitra Bukalapak - MBL</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: #f4f4f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .phone-container {
+            width: 100%;
+            max-width: 480px;
+            background-color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow-x: hidden;
+            padding-bottom: 70px;
+        }
+        
+        /* Status Bar Simulation */
+        .status-bar {
+            background-color: #ffffff;
+            height: 28px;
+            padding: 0 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #000;
+        }
+        .status-bar .right-icons {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .battery-icon {
+            border: 1px solid #000;
+            padding: 1px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            font-size: 9px;
+            height: 12px;
+        }
+
+        /* Top App Navigation */
+        .app-header-nav {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            background-color: #ffffff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-tab {
+            flex: 1;
+            text-align: center;
+            padding: 14px 0;
+            font-size: 13px;
+            font-weight: 700;
+            color: #888;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+        .nav-tab.active {
+            color: #0052cc;
+            border-bottom-color: #0052cc;
+        }
+        .nav-tab-icon {
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        /* Views */
+        .view-content {
+            display: none;
+            padding: 12px;
+        }
+        .view-content.active {
+            display: block;
+        }
+
+        /* Balance & Profile Section */
+        .balance-card-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .balance-box {
+            flex: 1.3;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .balance-wallet-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #fff1f2;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e11d48;
+            font-size: 20px;
+        }
+        .balance-info h4 {
+            font-size: 18px;
+            font-weight: 800;
+            color: #1e293b;
+        }
+        .balance-info p {
+            font-size: 11px;
+            color: #e11d48;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        .profile-box {
+            flex: 0.7;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .profile-badge {
+            width: 28px;
+            height: 28px;
+            background-color: #fef3c7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #d97706;
+            font-weight: 700;
+            font-size: 12px;
+        }
+        .profile-info h5 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .profile-info p {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        /* Quick Action Bar (4 Items with dots) */
+        .quick-actions-bar {
+            display: flex;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 6px;
+            margin-bottom: 12px;
+        }
+        .quick-action-item {
+            flex: 1;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .quick-icon-wrapper {
+            font-size: 20px;
+            position: relative;
+        }
+        .red-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            position: absolute;
+            top: -2px;
+            right: -2px;
+        }
+        .notification-count {
+            background-color: #ef4444;
+            color: white;
+            font-size: 9px;
+            padding: 1px 4px;
+            border-radius: 8px;
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            font-weight: 700;
+            display: none;
+        }
+
+        /* Warning Info Banner */
+        .warning-banner {
+            background-color: #f0fdf4;
+            border: 1px solid #dcfce7;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            color: #166534;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        /* 16 Grid Items Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            row-gap: 16px;
+            column-gap: 8px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 12px 6px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        .grid-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+        }
+        .grid-icon-container {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 6px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: transform 0.1s ease;
+        }
+        .grid-item:active .grid-icon-container {
+            transform: scale(0.92);
+        }
+        .grid-item span {
+            font-size: 11px;
+            font-weight: 600;
+            color: #334155;
+            line-height: 1.2;
+            max-width: 80px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .feat-badge {
+            position: absolute;
+            top: -6px;
+            right: 4px;
+            font-size: 8px;
+            color: white;
+            padding: 1px 4px;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .badge-baru { background-color: #ef4444; }
+        .badge-flash { background-color: #e11d48; background: linear-gradient(45deg, #e11d48, #ea580c); }
+
+        /* Banner Promosi */
+        .promo-banner-large {
+            background: linear-gradient(135deg, #d0002d 0%, #ff1e56 100%);
+            border-radius: 12px;
+            padding: 16px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 10px rgba(208,0,45,0.25);
+        }
+        .promo-title {
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+        .promo-highlight {
+            font-size: 26px;
+            font-weight: 900;
+            margin: 4px 0;
+            letter-spacing: -0.5px;
+        }
+        .promo-code-box {
+            background-color: rgba(0,0,0,0.2);
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 4px;
+            border: 1px dashed rgba(255,255,255,0.4);
+        }
+        .promo-illustration {
+            position: absolute;
+            right: 12px;
+            bottom: -10px;
+            font-size: 80px;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        /* Bottom Persistent Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background-color: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            height: 60px;
+            z-index: 200;
+        }
+        .bottom-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            cursor: pointer;
+        }
+        .bottom-nav-item.active {
+            color: #0052cc;
+        }
+        .bottom-nav-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        /* Professional Modal Screen Form Sheet */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: none;
+            align-items: flex-end;
+        }
+        .modal-sheet {
+            width: 100%;
+            background-color: #ffffff;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            padding: 20px;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .modal-header h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .close-modal-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 4px;
+        }
+        
+        /* Professional Input Form Styling */
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+        .form-select, .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #1e293b;
+            font-weight: 600;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-select:focus, .form-input:focus {
+            border-color: #0052cc;
+        }
+        .input-hint {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+        .submit-trx-btn {
+            width: 100%;
+            background-color: #0052cc;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+        .submit-trx-btn:hover {
+            background-color: #0043a4;
+        }
+
+        /* Error QRIS UI Block */
+        .error-block {
+            display: none;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .error-warning-card {
+            background-color: #fff5f5;
+            border: 1px solid #fed7d7;
+            border-radius: 10px;
+            padding: 14px;
+            color: #c53030;
+            font-size: 12px;
+            line-height: 1.5;
+            text-align: justify;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+        .qris-title-label {
+            font-size: 15px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-top: 8px;
+        }
+        .qris-nmid {
+            font-size: 11px;
+            color: #718096;
+            margin-bottom: 12px;
+        }
+        
+        /* HD Pixel-Perfect SVGs for QRIS Matrix */
+        .qris-box-hd {
+            width: 240px;
+            height: 240px;
+            margin: 0 auto;
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* History Ticket Styles */
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .card-row-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .badge-status {
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .status-success { background-color: #dcfce7; color: #166534; }
+        .status-failed { background-color: #fee2e2; color: #991b1b; }
+        
+        .history-title { font-size: 13px; font-weight: 700; color: #1e293b; }
+        .history-time { font-size: 11px; color: #64748b; margin-top: 2px; }
+        .history-ref { font-size: 11px; font-family: monospace; color: #475569; background: #f8fafc; padding: 2px 4px; border-radius: 4px; }
+        
+        .history-details-box {
+            font-size: 12px;
+            color: #334155;
+            margin-top: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .detail-item-line {
+            display: flex;
+            justify-content: space-between;
+        }
+        .detail-label-gray { color: #64748b; font-weight: 500; }
+        .detail-val-bold { font-weight: 700; color: #0f172a; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94a3b8;
+            font-size: 13px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-container">
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div>01.09</div>
+        <div class="right-icons">
+            <span>VoLTE</span>
+            <span>4G</span>
+            <div class="battery-icon">5%</div>
+        </div>
+    </div>
+
+    <!-- Top Tab Nav -->
+    <div class="app-header-nav">
+        <div class="nav-tab active" onclick="switchView('home')">
+            <span class="nav-tab-icon">🏠</span>
+            <span>HOME</span>
+        </div>
+        <div class="nav-tab" onclick="switchView('transaksi')">
+            <span class="nav-tab-icon">📋</span>
+            <span>TRANSAKSI</span>
+        </div>
+        <div class="nav-tab" onclick="switchView('bantuan')">
+            <span class="nav-tab-icon">❓</span>
+            <span>BANTUAN</span>
+        </div>
+        <div class="nav-tab" onclick="switchView('akun')">
+            <span class="nav-tab-icon">👤</span>
+            <span>AKUN</span>
+        </div>
+    </div>
+
+    <!-- ================= VIEW HOME ================= -->
+    <div id="view-home" class="view-content active">
+        <!-- Balance Row -->
+        <div class="balance-card-container">
+            <div class="balance-box">
+                <div class="balance-wallet-icon">💳</div>
+                <div class="balance-info">
+                    <h4 id="display-saldo">Rp32.000.000</h4>
+                    <p>Isi saldo di sini, yuk! ❯</p>
+                </div>
+            </div>
+            <div class="profile-box">
+                <div class="profile-badge">4</div>
+                <div class="profile-info">
+                    <h5>206</h5>
+                    <p>Bronze</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Action Bar -->
+        <div class="quick-actions-bar">
+            <div class="quick-action-item">
+                <div class="quick-icon-wrapper">📈<span class="red-dot"></span></div>
+                <div>Coba Gratis!</div>
+            </div>
+            <div class="quick-action-item">
+                <div class="quick-icon-wrapper">📖</div>
+                <div>Pembukuan &...</div>
+            </div>
+            <div class="quick-action-item">
+                <div class="quick-icon-wrapper">%<span class="red-dot"></span></div>
+                <div>Promo</div>
+            </div>
+            <div class="quick-action-item" onclick="switchView('transaksi')">
+                <div class="quick-icon-wrapper">🔔<span id="notif-badge" class="notification-count">0</span></div>
+                <div>Notifikasi</div>
+            </div>
+        </div>
+
+        <!-- Warning Info Banner -->
+        <div class="warning-banner">
+            🛡️ <span>Hati-hati modus penipuan!</span> 🦅
+        </div>
+
+        <!-- 16 Features Grid Dashboard -->
+        <div class="features-grid">
+            <div class="grid-item" onclick="openModal('Kirim Uang')">
+                <div class="grid-icon-container" style="background-color: #e0f2fe; color: #0284c7;">💸</div>
+                <span>Kirim Uang</span>
+            </div>
+            <div class="grid-item" onclick="openModal('Top Up Digital')">
+                <div class="grid-icon-container" style="background-color: #fae8ff; color: #c084fc;">📱</div>
+                <span>Top Up Digital</span>
+                <span class="feat-badge badge-flash">Flash Sale</span>
+            </div>
+            <div class="grid-item" onclick="openModal('EDC Saku')">
+                <div class="grid-icon-container" style="background-color: #fee2e2; color: #dc2626;">🧮</div>
+                <span>EDC Saku</span>
+                <span class="feat-badge badge-baru">Baru</span>
+            </div>
+            <div class="grid-item" onclick="openModal('EDC Android')">
+                <div class="grid-icon-container" style="background-color: #f0fdf4; color: #16a34a;">📲</div>
+                <span>EDC Android</span>
+            </div>
+            <div class="grid-item" onclick="openModal('QRIS Soundbox')">
+                <div class="grid-icon-container" style="background-color: #e0f2fe; color: #2563eb;">🔊</div>
+                <span>QRIS Soundbox</span>
+                <span class="feat-badge badge-baru">Baru</span>
+            </div>
+            <div class="grid-item" onclick="openModal('Token Listrik')">
+                <div class="grid-icon-container" style="background-color: #fef9c3; color: #d97706;">⚡</div>
+                <span>Token Listrik</span>
+            </div>
+            <div class="grid-item" onclick="openModal('Paket Data')">
+                <div class="grid-icon-container" style="background-color: #e0f2fe; color: #0284c7;">🌐</div>
+                <span>Paket Data</span>
+            </div>
+            <div class="grid-item" onclick="openModal('Pulsa')">
+                <div class="grid-icon-container" style="background-color: #ffedd5; color: #ea580c;">📞</div>
+                <span>Pulsa</span>
+            </div>
+            <div class="grid-item" onclick="openModal('Top Up Game')">
+                <div class="grid-icon-container" style="background-color: #dcfce7; color: #15803d;">🎮</div>
+                <span>Top Up Game</span>
+            </div>
+            <div class="grid-item" onclick="openModal('Buat QRIS Jualan')">
+                <div class="grid-icon-container" style="background-color: #fae8ff; color: #701a75;">🏪</div>
+                <span>Buat QRIS Jualan</span>
+            </div>
+            <div class="grid-item" onclick="openModal('Angsuran Kredit')">
+                <div class="grid-icon-container" style="background-color: #e0f2fe; color: #1d4ed8;">💼</div>
+                <span>Angsuran Kredit</span>
+            </div>
+            <div class="grid-item" onclick="openModal('Tagihan Listrik PLN')">
+                <div class="grid-icon-container" style="background-color: #fef9c3; color: #b45309;">💡</div>
+                <span>Tagihan PLN</span>
+            </div>
+            <div class="grid-item" onclick="openModal('PDAM')">
+                <div class="grid-icon-container" style="background-color: #e0f2fe; color: #0369a1;">🚰</div>
+                <span>PDAM</span>
+            </div>
+            <div class="grid-item" onclick="openModal('Telkom / IndiHome')">
+                <div class="grid-icon-container" style="background-color: #fee2e2; color: #b91c1c;">☎️</div>
+                <span>Telkom / IndiHome</span>
+            </div>
+            <div class="grid-item" onclick="openModal('BPJS Kesehatan')">
+                <div class="grid-icon-container" style="background-color: #e0f2fe; color: #047857;">🏥</div>
+                <span>BPJS Kesehatan</span>
+            </div>
+            <div class="grid-item" onclick="openModal('Lihat Semua')">
+                <div class="grid-icon-container" style="background-color: #f1f5f9; color: #475569;">░</div>
+                <span>Lihat Semua</span>
+            </div>
+        </div>
+
+        <!-- Promo Banner Large Graphic element -->
+        <div class="promo-banner-large">
+            <div class="promo-title">Dapetin Untungnya Kirim Uang ke Semua Bank</div>
+            <div class="promo-highlight">Gratis Biaya Admin*</div>
+            <div class="promo-code-box">KODE PROMO: GRATISADMINKU</div>
+            <div class="promo-illustration">🏦</div>
+        </div>
+    </div>
+
+    <!-- ================= VIEW TRANSAKSI ================= -->
+    <div id="view-transaksi" class="view-content">
+        <h3 style="font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 12px;">Riwayat Aktivitas</h3>
+        <div id="history-container" class="history-list">
+            <!-- Dynamic Injection -->
+            <div class="empty-state">Belum ada aktivitas finansial baru.</div>
+        </div>
+    </div>
+
+    <!-- ================= VIEW BANTUAN ================= -->
+    <div id="view-bantuan" class="view-content">
+        <div class="empty-state">
+            <span style="font-size: 30px;">💁</span><br><br>
+            Halaman Pusat Bantuan Mitra Bukalapak.<br>Ada kendala? CS kami siap melayani 24 jam.
+        </div>
+    </div>
+
+    <!-- ================= VIEW AKUN ================= -->
+    <div id="view-akun" class="view-content">
+        <div class="empty-state">
+            <span style="font-size: 30px;">⚙️</span><br><br>
+            Pengaturan Akun & Keamanan Mitra.<br>Level Akun Anda: 206 Bronze.
+        </div>
+    </div>
+</div>
+
+<!-- ================= DYNAMIC MODAL SERVICE SHEETS ================= -->
+<div id="service-modal" class="modal-overlay">
+    <div class="modal-sheet">
+        <div class="modal-header">
+            <h3 id="modal-service-title">Layanan Finansial</h3>
+            <button class="close-modal-btn" onclick="closeModal()">✕</button>
+        </div>
+        
+        <!-- Standard Interactive Input Flow -->
+        <div id="modal-form-flow">
+            <div class="form-group" id="destination-group">
+                <label id="label-destination">Pilih Rekening / Institusi Tujuan</label>
+                <select class="form-select" id="input-destination">
+                    <option value="BANK MANDIRI">BANK MANDIRI</option>
+                    <option value="BANK BRI">BANK BRI</option>
+                    <option value="BANK BCA">BANK BCA</option>
+                    <option value="BANK BNI">BANK BNI</option>
+                    <option value="OVO DIGITAL">OVO E-Wallet</option>
+                    <option value="DANA BALANCE">DANA E-Wallet</option>
+                    <option value="GOPAY PAY">GOPAY E-Wallet</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label id="label-number">Nomor Rekening / Kontrak / Telepon</label>
+                <input type="number" class="form-input" id="input-account-num" placeholder="Contoh: 081234567890 / 1220493821">
+            </div>
+
+            <div class="form-group">
+                <label>Nominal Pengisian / Transfer (Rp)</label>
+                <input type="number" class="form-input" id="input-amount" placeholder="Masukkan jumlah dana">
+                <div class="input-hint">Batas maksimal limit transaksi harian instan: Rp1.000.000</div>
+            </div>
+
+            <button class="submit-trx-btn" onclick="executeFinancialLogic()">Proses Transaksi Aman</button>
+        </div>
+
+        <!-- Refined HD QRIS Error Block Presentation Layer -->
+        <div id="modal-error-flow" class="error-block">
+            <div class="error-warning-card">
+                ⚠️ Transaksi Gagal. Batas limit akun Anda tidak mencukupi untuk nominal ini. Silakan lakukan peningkatan limit (upgrade limit) instan sebesar Rp500.000 dengan melakukan pengisian saldo secara manual melalui pemindaian QRIS Mitra Anda di bawah ini.
+            </div>
+            
+            <div class="qris-title-label">Mbl949384 Warung Acep</div>
+            <div class="qris-nmid">NMID: ID1026480043383</div>
+            
+            <!-- High Definition Scannable Vector Generated Matrix Grid Pattern -->
+            <div class="qris-box-hd">
+                <svg width="220" height="220" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Outer solid frame bg -->
+                    <rect width="220" height="220" fill="white"/>
+                    
+                    <!-- Corner Positioning Anchor Finder Pattern 1 (Top Left) -->
+                    <rect x="10" y="10" width="40" height="40" fill="black"/>
+                    <rect x="15" y="15" width="30" height="30" fill="white"/>
+                    <rect x="20" y="20" width="20" height="20" fill="black"/>
+                    
+                    <!-- Corner Positioning Anchor Finder Pattern 2 (Top Right) -->
+                    <rect x="170" y="10" width="40" height="40" fill="black"/>
+                    <rect x="175" y="15" width="30" height="30" fill="white"/>
+                    <rect x="180" y="20" width="20" height="20" fill="black"/>
+                    
+                    <!-- Corner Positioning Anchor Finder Pattern 3 (Bottom Left) -->
+                    <rect x="10" y="170" width="40" height="40" fill="black"/>
+                    <rect x="15" y="175" width="30" height="30" fill="white"/>
+                    <rect x="20" y="180" width="20" height="20" fill="black"/>
+                    
+                    <!-- Small Alignment Anchor Pattern (Bottom Right Area) -->
+                    <rect x="165" y="165" width="20" height="20" fill="black"/>
+                    <rect x="170" y="170" width="10" height="10" fill="white"/>
+                    <rect x="174" y="174" width="2" height="2" fill="black"/>
+                    
+                    <!-- High Quality Clean High-Density Encrypted Data Matrix Simulation Patterns -->
+                    <g fill="black">
+                        <!-- Top header dense stripes -->
+                        <rect x="60" y="10" width="10" height="5"/> <rect x="80" y="10" width="15" height="5"/> <rect x="110" y="10" width="5" height="10"/> <rect x="130" y="10" width="20" height="5"/>
+                        <rect x="65" y="20" width="25" height="5"/> <rect x="100" y="20" width="5" height="5"/> <rect x="115" y="20" width="10" height="5"/> <rect x="140" y="25" width="15" height="5"/>
+                        <rect x="60" y="35" width="5" height="15"/> <rect x="75" y="30" width="15" height="5"/> <rect x="105" y="35" width="20" height="5"/> <rect x="135" y="35" width="10" height="5"/>
+                        
+                        <!-- Left middle data cluster -->
+                        <rect x="10" y="60" width="5" height="20"/> <rect x="25" y="65" width="15" height="5"/> <rect x="45" y="60" width="10" height="15"/>
+                        <rect x="15" y="90" width="20" height="5"/> <rect x="40" y="85" width="5" height="15"/> <rect x="20" y="110" width="10" height="10"/>
+                        <rect x="10" y="130" width="15" height="5"/> <rect x="35" y="125" width="15" height="10"/>
+                        
+                        <!-- Center Core high density grid blocks -->
+                        <rect x="65" y="60" width="15" height="15"/> <rect x="90" y="65" width="5" height="20"/> <rect x="105" y="60" width="25" height="5"/>
+                        <rect x="60" y="85" width="10" height="5"/> <rect x="75" y="95" width="20" height="10"/> <rect x="110" y="80" width="15" height="15"/>
+                        <rect x="60" y="115" width="25" height="5"/> <rect x="95" y="110" width="10" height="20"/> <rect x="120" y="115" width="15" height="5"/>
+                        <rect x="65" y="140" width="15" height="15"/> <rect x="90" y="145" width="25" height="5"/> <rect x="130" y="135" width="5" height="20"/>
+                        
+                        <!-- Right side complex modules -->
+                        <rect x="140" y="60" width="20" height="10"/> <rect x="170" y="65" width="10" height="5"/> <rect x="195" y="60" width="15" height="15"/>
+                        <rect x="145" y="80" width="5" height="25"/> <rect x="160" y="90" width="25" height="5"/> <rect x="190" y="85" width="10" height="20"/>
+                        <rect x="140" y="115" width="20" height="5"/> <rect x="175" y="110" width="5" height="15"/> <rect x="190" y="120" width="20" height="5"/>
+                        <rect x="145" y="140" width="10" height="15"/> <rect x="165" y="135" width="20" height="5"/> <rect x="200" y="145" width="10" height="15"/>
+                        
+                        <!-- Bottom footer data lines -->
+                        <rect x="60" y="170" width="30" height="5"/> <rect x="100" y="165" width="15" height="10"/> <rect x="125" y="170" width="10" height="5"/>
+                        <rect x="65" y="185" width="10" height="15"/> <rect x="85" y="190" width="25" height="5"/> <rect x="120" y="185" width="5" height="15"/>
+                        <rect x="60" y="205" width="40" height="5"/> <rect x="110" y="205" width="15" height="5"/> <rect x="135" y="200" width="20" height="10"/>
+                    </g>
+                    
+                    <!-- Explicit Red GPN Logo/Watermark Anchor Accent at the Center Core -->
+                    <rect x="98" y="98" width="24" height="24" fill="#ef4444" rx="4"/>
+                    <text x="110" y="114" fill="white" font-size="10" font-weight="900" text-anchor="middle">MBL</text>
+                </svg>
+            </div>
+            
+            <p style="font-size: 10px; color: #a0aec0; margin-top: 8px;">Dicetak oleh: 93600503</p>
+            <p style="font-size: 11px; color: #4a5568; margin-top: 10px; font-weight: 600;">Menerima pembayaran dari semua aplikasi yang mendukung QRIS (DANA, OVO, GoPay, LinkAja, dll)</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // System Initial Persistent State Data Config
+    let CURRENT_SALDO = 32000000;
+    let transactionHistory = [];
+    let pendingNotificationsCount = 0;
+    let selectedActiveService = '';
+
+    // Initialize Local Storage persistence logic securely
+    if (localStorage.getItem('mbl_saldo_secure') !== null) {
+        CURRENT_SALDO = parseInt(localStorage.getItem('mbl_saldo_secure'));
+    } else {
+        localStorage.setItem('mbl_saldo_secure', CURRENT_SALDO.toString());
+    }
+
+    if (localStorage.getItem('mbl_history_log')) {
+        transactionHistory = JSON.parse(localStorage.getItem('mbl_history_log'));
+    }
+
+    // Direct render on window frame loads
+    updateDomValues();
+
+    function updateDomValues() {
+        document.getElementById('display-saldo').innerText = 'Rp' + CURRENT_SALDO.toLocaleString('id-ID');
+        renderHistoryList();
+        
+        const badge = document.getElementById('notif-badge');
+        if (pendingNotificationsCount > 0) {
+            badge.innerText = pendingNotificationsCount;
+            badge.style.display = 'block';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    // App Navigation Frame Switcher View
+    function switchView(viewName) {
+        // Reset dynamic notification badge counter if user checks the Transaksi tab
+        if (viewName === 'transaksi') {
+            pendingNotificationsCount = 0;
+        }
+
+        // DOM clean toggle
+        const views = ['home', 'transaksi', 'bantuan', 'akun'];
+        views.forEach(v => {
+            document.getElementById('view-' + v).classList.remove('active');
+        });
+        
+        // Tab indicator active style toggle
+        const tabs = document.getElementsByClassName('nav-tab');
+        for (let i = 0; i < tabs.length; i++) {
+            tabs[i].classList.remove('active');
+        }
+
+        document.getElementById('view-' + viewName).classList.add('active');
+        
+        // Find corresponding matching index to colorize active top navigation
+        const currentTabIdx = ['home', 'transaksi', 'bantuan', 'akun'].indexOf(viewName);
+        if (currentTabIdx >= 0) {
+            tabs[currentTabIdx].classList.add('active');
+        }
+        
+        updateDomValues();
+    }
+
+    // Open Service Form Overlay Dialogs
+    function openModal(serviceName) {
+        selectedActiveService = serviceName;
+        document.getElementById('modal-service-title').innerText = 'Layanan ' + serviceName;
+        
+        // Reset states view defaults
+        document.getElementById('modal-form-flow').style.display = 'block';
+        document.getElementById('modal-error-flow').style.display = 'none';
+        
+        // Clear input form spaces
+        document.getElementById('input-amount').value = '';
+        document.getElementById('input-account-num').value = '';
+
+        // Dynamic labels text adjusters
+        const labelDest = document.getElementById('label-destination');
+        const selectDest = document.getElementById('input-destination');
+        const labelNum = document.getElementById('label-number');
+        const inputNum = document.getElementById('input-account-num');
+
+        if (serviceName === 'Kirim Uang') {
+            labelDest.innerText = 'Pilih Bank / E-Wallet Tujuan';
+            labelNum.innerText = 'Nomor Rekening / HP Penerima';
+            inputNum.placeholder = 'Contoh: 081234567890 / 1220493821';
+            document.getElementById('destination-group').style.display = 'block';
+        } else if (serviceName === 'Top Up Digital') {
+            labelDest.innerText = 'Pilih Layanan Dompet E-Money';
+            labelNum.innerText = 'Nomor Virtual Account / HP';
+            inputNum.placeholder = 'Contoh: 085799982312';
+            document.getElementById('destination-group').style.display = 'block';
+        } else {
+            // Other universal active elements context adaptations
+            labelNum.innerText = 'Nomor ID Pelanggan / Nomor Kontrak';
+            inputNum.placeholder = 'Masukkan ID Pelanggan Layanan';
+            document.getElementById('destination-group').style.display = 'none';
+        }
+
+        document.getElementById('service-modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('service-modal').style.display = 'none';
+    }
+
+    // Core Business Logic Engine Evaluation
+    function executeFinancialLogic() {
+        const amountInput = document.getElementById('input-amount').value;
+        const accountNumInput = document.getElementById('input-account-num').value;
+        const destinationVal = document.getElementById('input-destination').value;
+
+        if (!amountInput || !accountNumInput) {
+            alert('Mohon isi nomor tujuan dan nominal transaksi Anda.');
+            return;
+        }
+
+        const amount = parseInt(amountInput);
+        if (amount <= 0) {
+            alert('Nominal transaksi harus lebih dari Rp0.');
+            return;
+        }
+
+        // Generate dynamic secure parameters info data
+        const timestamp = new Date();
+        const options = { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        const formattedDate = timestamp.toLocaleDateString('id-ID', options) + ' WIB';
+        const referenceCode = 'MBL/TRX/' + timestamp.getFullYear() + String(timestamp.getMonth()+1).padStart(2,'0') + String(timestamp.getDate()).padStart(2,'0') + '/' + Math.floor(100000 + Math.random() * 900000);
+
+        // Limit Threshold Logic Condition Evaluation (Rp 1.000.000 limit)
+        if (amount > 1000000) {
+            // TRIGGER SYSTEM FAILURE OVERLIMIT & DEPLOY QRIS SHEET FLOW
+            document.getElementById('modal-form-flow').style.display = 'none';
+            document.getElementById('modal-error-flow').style.display = 'block';
+
+            // Silently record error logs history ticket data record for compliance tracking
+            const logFailed = {
+                id: referenceCode,
+                service: selectedActiveService,
+                target: destinationVal + ' (' + accountNumInput + ')',
+                amount: amount,
+                time: formattedDate,
+                status: 'Gagal',
+                reason: 'Batas limit akun tidak mencukupi (Over-limit)'
+            };
+            
+            transactionHistory.unshift(logFailed);
+            localStorage.setItem('mbl_history_log', JSON.stringify(transactionHistory));
+            pendingNotificationsCount++;
+            updateDomValues();
+        } else {
+            // SUCCESSFUL TRANSACTION FLOW
+            if (amount > CURRENT_SALDO) {
+                alert('Transaksi Gagal. Saldo Utama Anda tidak mencukupi.');
+                return;
+            }
+
+            // Deduct system master states safely
+            CURRENT_SALDO -= amount;
+            localStorage.setItem('mbl_saldo_secure', CURRENT_SALDO.toString());
+
+            // Build precise detailed financial history item
+            const logSuccess = {
+                id: referenceCode,
+                service: selectedActiveService,
+                target: destinationVal + ' (' + accountNumInput + ')',
+                amount: amount,
+                time: formattedDate,
+                status: 'Berhasil',
+                reason: 'Sukses [Berhasil]'
+            };
+
+            transactionHistory.unshift(logSuccess);
+            localStorage.setItem('mbl_history_log', JSON.stringify(transactionHistory));
+            
+            pendingNotificationsCount++;
+            updateDomValues();
+            
+            alert('Transaksi ' + selectedActiveService + ' Berhasil diproses sebesar Rp' + amount.toLocaleString('id-ID') + '!');
+            closeModal();
+        }
+    }
+
+    // Dynamic History Builder Render Lists Components
+    function renderHistoryList() {
+        const container = document.getElementById('history-container');
+        if (transactionHistory.length === 0) {
+            container.innerHTML = '<div class="empty-state">Belum ada aktivitas finansial baru.</div>';
+            return;
+        }
+
+        let htmlRows = '';
+        transactionHistory.forEach(item => {
+            const isSuccess = item.status === 'Berhasil';
+            htmlRows += `
+                <div class="history-card">
+                    <div class="card-row-top">
+                        <div class="history-title">${item.service}</div>
+                        <span class="badge-status ${isSuccess ? 'status-success' : 'status-failed'}">${item.status}</span>
+                    </div>
+                    <div class="history-time">${item.time}</div>
+                    
+                    <div class="history-details-box">
+                        <div class="detail-item-line">
+                            <span class="detail-label-gray">Tujuan:</span>
+                            <span class="detail-val-bold">${item.target}</span>
+                        </div>
+                        <div class="detail-item-line">
+                            <span class="detail-label-gray">Nominal:</span>
+                            <span class="detail-val-bold" style="color: ${isSuccess ? '#166534' : '#991b1b'}">Rp${item.amount.toLocaleString('id-ID')}</span>
+                        </div>
+                        <div class="detail-item-line">
+                            <span class="detail-label-gray">Biaya Admin:</span>
+                            <span class="detail-val-bold" style="color: #166534">Rp0 (Promo)</span>
+                        </div>
+                        <div class="detail-item-line" style="margin-top: 4px;">
+                            <span class="detail-label-gray">Kode REF:</span>
+                            <span class="history-ref">${item.id}</span>
+                        </div>
+                        ${!isSuccess ? `
+                        <div class="detail-item-line" style="color: #991b1b; font-size: 11px; font-weight: 600; margin-top: 2px;">
+                            <span>⚠️ Keterangan: ${item.reason}</span>
+                        </div>` : ''}
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = htmlRows;
+    }
+</script>
+
+</body>
+</html>
